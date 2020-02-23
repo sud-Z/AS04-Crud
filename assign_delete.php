@@ -2,7 +2,10 @@
 	require 'database.php';
 	$id = 0;
 	
-    $id = $_GET['id'];
+   	$id = null;
+	if ( !empty($_GET['id'])) {
+		$id = $_REQUEST['id'];
+	}
 	
 	if ( !empty($_POST)) {
 		// keep track post values
