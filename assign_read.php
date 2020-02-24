@@ -10,10 +10,23 @@
     } else {
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        # get assignment details
         $sql = "SELECT * FROM assignments where id = ?";
         $q = $pdo->prepare($sql);
         $q->execute(array($id));
         $data = $q->fetch(PDO::FETCH_ASSOC);
+
+        # get volunteer details
+        $sql = "SELECT * FROM customers where id = ?";
+        $q = $pdo->prepare($sql);
+        $q->execute(array($data['assign_per_id']));
+        $perdata = $q->fetch(PDO::FETCH_ASSOC);
+
+        # get event details
+        $sql = "SELECT * FROM events where id = ?";
+        $q = $pdo->prepare($sql);
+        $q->execute(array($data['assign_event_id']));
+        $eventdata = $q->fetch(PDO::FETCH_ASSOC);
         Database::disconnect();
     }
 ?>
@@ -34,87 +47,39 @@
                         <h3>Read an Assignment</h3>
                     </div>
                     
-           
-                       <div class="row">
-                        <h4>Customers</h4>
-                    </div>
-                  
-                    
-                    <table class="table table-striped table-bordered">
-                      <thead>
-                        <tr>
-                          <th>Name</th>
-                          <th>Email Address</th>
-                          <th>Mobile Number</th>
-                          <th>ID</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                      <?php
-                       
-                       $pdo = Database::connect();
-                       $sql = 'SELECT * FROM customers ORDER BY id DESC';
-                       foreach ($pdo->query($sql) as $row) {
-                                echo '<tr>';
-                                echo '<td>'. $row['name'] . '</td>';
-                                echo '<td>'. $row['email'] . '</td>';
-                                echo '<td>'. $row['mobile'] . '</td>';
-                                echo '<td>'. $row['id'] . '</td>';
-                                echo '</tr>';
-                       }
-                       Database::disconnect();
-                      ?>
-                      </tbody>
-                </table>
                 
-          
-                    <div class="row">
-                        <h4>Events</h4>
-                    </div>
-                  
                 
-                <table class="table table-striped table-bordered">
-                      <thead>
-                        <tr>
-                          <th>Date</th>
-                          <th>Time</th>
-                          <th>Location</th>
-                          <th>Descritpion</th>
-                          <th>ID</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                      <?php
-                       $pdo = Database::connect();
-                       $sql = 'SELECT * FROM events ORDER BY id DESC';
-                       foreach ($pdo->query($sql) as $row) {
-                                echo '<tr>';
-                                echo '<td>'. $row['event_date'] . '</td>';
-                                echo '<td>'. $row['event_time'] . '</td>';
-                                echo '<td>'. $row['event_location'] . '</td>';
-                                echo '<td>'. $row['event_description'] . '</td>';
-                                echo '<td>'. $row['id'] . '</td>';
-                                echo '</tr>';
-                       }
-                       Database::disconnect();
-                      ?>
-                      </tbody>
-                </table>
                      
                      <div class="form-horizontal" >
                       <div class="control-group">
                         <label class="control-label">Customer:</label>
                         <div class="controls">
                             <label class="checkbox">
-                                <?php echo ($data['assign_per_id']);?>
+                                <?php echo ($perdata['name']);?>
                             </label>
                         </div>
                       </div>
                       <div class="control-group">
-                        <label class="control-label">Event:</label>
+                        <label class="control-label">Event Location:</label>
                         <div class="controls">
                             <label class="checkbox">
-                                <?php echo ($data['assign_event_id']);?>
+                                <?php echo ($eventdata['event_location']);?>
+                            </label>
+                        </div>
+                      </div>
+                      <div class="control-group">
+                        <label class="control-label">Event Date:</label>
+                        <div class="controls">
+                            <label class="checkbox">
+                                <?php echo ($eventdata['event_date']);?>
+                            </label>
+                        </div>
+                      </div>
+                       <div class="control-group">
+                        <label class="control-label">Event Description:</label>
+                        <div class="controls">
+                            <label class="checkbox">
+                                <?php echo ($eventdata['event_description']);?>
                             </label>
                         </div>
                       </div>
